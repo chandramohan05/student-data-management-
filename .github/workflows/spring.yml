@@ -1,4 +1,4 @@
-name: Spring Boot CI
+name: Spring Boot CI with MySQL
 
 on:
   push:
@@ -8,7 +8,17 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: mohan@2005
+          MYSQL_DATABASE: sms
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping --silent" --health-interval=10s --health-timeout=5s --health-retries=5
 
     steps:
       - name: Checkout Code
@@ -20,11 +30,24 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Build Project
-        run: mvn clean compile
+      - name: Wait for MySQL to be ready
+        run: |
+          for i in {1..30}; do
+            if mysqladmin ping -h "localhost" --silent; then
+              echo "MySQL is ready!"
+              break
+            fi
+            echo "Waiting for MySQL..."
+            sleep 2
+          done
 
-      - name: Run Tests
-        run: mvn test
+      - name: Build and Run Tests
+        run: mvn clean install
+        env:
+          SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/sms?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+          SPRING_DATASOURCE_USERNAME: root
+          SPRING_DATASOURCE_PASSWORD: mohan@2005
+
 
 
 
