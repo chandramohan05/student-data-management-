@@ -23,69 +23,69 @@ public class studentcontroll {
     @GetMapping("/students")
     public String listStudents(Model model) {
         model.addAttribute("students", studentService.getAllstudents());
-        return "students";
+        return "views/students";
     }
 
     // Show create form
     @GetMapping("/students/new")
     public String createStudentForm(Model model) {
         model.addAttribute("student", new student());
-        return "create-student";
+        return "views/create-student";
     }
 
     // Save student
     @PostMapping("/students")
     public String saveStudent(@ModelAttribute("student") student student) {
         studentService.savestudent(student);
-        return "redirect:/students";
+        return "redirect:/views/students";
     }
 
     // Edit form
     @GetMapping("/students/edit/{id}")
     public String editStudentForm(@PathVariable Long id, Model model) {
         model.addAttribute("student", studentService.getstudentbyid(id));
-        return "edit_student";
+        return "views/edit_student";
     }
 
     // Update student
     @PostMapping("/students/{id}")
     public String updateStudent(@PathVariable Long id, @ModelAttribute("student") student student) {
         studentService.updatestudent(student);
-        return "redirect:/students";
+        return "redirect:/views/students";
     }
 
     // Delete student
     @GetMapping("/students/{id}")
     public String deleteStudent(@PathVariable Long id) {
         studentService.deletestudentbyid(id);
-        return "redirect:/students";
+        return "redirect:/views/students";
     }
 
     // About page
     @GetMapping("/about")
     public String aboutPage() {
-        return "about";
+        return "views/about";
     }
 
     // Signup page
     @GetMapping("/signup")
     public String showSignupForm(Model model) {
         model.addAttribute("user", new User());
-        return "signup";
+        return "views/signup";
     }
 
     // Handle signup
     @PostMapping("/signup")
     public String signup(@ModelAttribute("user") User user) {
         userRepository.save(user);
-        return "redirect:/login";
+        return "redirect:/views/login";
     }
 
     // Login page
     @GetMapping("/login")
     public String showLoginForm(Model model) {
         model.addAttribute("user", new User());
-        return "login";
+        return "views/login";
     }
 
     // Handle login
@@ -93,19 +93,19 @@ public class studentcontroll {
     public String login(@ModelAttribute("user") User user, Model model) {
         User existingUser = userRepository.findByUsernameAndPassword(user.getUsername(), user.getPassword());
         if (existingUser != null) {
-            return "redirect:/students";
+            return "redirect:/views/students";
         } else {
             model.addAttribute("error", "Invalid email or password");
-            return "login";
+            return "views/login";
         }
     }
     @GetMapping("/home")
     public String homePage() {
-        return "home";
+        return "views/home";
     }
    
     @GetMapping("/main")
     public String home() {
-    	 return "main";  // View name like index.jsp or index.html
+    	 return "views/main";  // View name like index.jsp or index.html
     }
 }
